@@ -39,12 +39,26 @@ function lighthouseco2(urll, res) {
       onlyCategories: ["performance"],
       port: chrome.port,
     };
-
-    runnerResult = await lighthouse(urll, options);
+    async function runLighthouse() {
+      runnerResult = await lighthouse(urll, options);
+      await chrome.kill();
+    }
     
+    const timeout = setTimeout(() => {
+      console.log('Lighthouse test took too long, cancelling...');
+      process.exit(1); // Or any other action you want to take when the test is cancelled
+    }, 60000); // 1 minute
+    
+    await runLighthouse()
+      .then(() => clearTimeout(timeout))
+      .catch((err) => {
+        clearTimeout(timeout);
+        console.error(err);
+        process.exit(1);
+      });
     // `.lhr` is the Lighthouse Result as a JS object
 
-    await chrome.kill();
+   
 
     // CO2 Calcul à partir de de la function co22 pour pas de doublons 
     let co2PerPageview = co22(runnerResult.lhr.audits["total-byte-weight"].numericValue);
@@ -124,4 +138,5 @@ let port = process.env.PORT || 3000; // Besoin du port 3000 !
 app.listen(port, () => {
   console.log("App running on port :" + port);
 });
+
 // ----------------------------------------
