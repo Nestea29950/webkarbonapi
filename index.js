@@ -5,8 +5,8 @@ import fetch, { Response } from "node-fetch";
 import express, { response } from "express";
 import cors from "cors";
 import url from "node:url";
-let queue = true;
 
+const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
 var app = express();
 
 app.use(
@@ -58,8 +58,6 @@ function lighthouseco2(urll, res) {
       });
     // `.lhr` is the Lighthouse Result as a JS object
 
-   
-
     // CO2 Calcul à partir de de la function co22 pour pas de doublons 
     let co2PerPageview = co22(runnerResult.lhr.audits["total-byte-weight"].numericValue);
     audits.push({"name": "carbon", "score": co2PerPageview, "Green": false})
@@ -103,7 +101,7 @@ function lighthouseco2(urll, res) {
       name: "performances",
       score: runnerResult.lhr.categories.performance.score,
     });
-    queue = true;
+
     
     res.send({
       audits,
@@ -114,20 +112,40 @@ function lighthouseco2(urll, res) {
 // ----------------------------------
 
 // Api Route pour renvoyer audits
+// Créez une file d'attente pour stocker les requêtes en attente
+const requestQueue = [];
+
 app.get("/api", async function (req, res) {
-  function start(){
-  if(queue == true){
-    queue = false;
-    let url = req.query.url;
-    lighthouseco2(url, res);
+  // Récupérez l'URL de la requête
+  const url = req.query.url;
+
+  // Ajoutez la requête à la file d'attente
+  requestQueue.push({ url, res });
+
+  // Vérifiez si la file d'attente est vide et si la requête est la première dans la file
+  if (requestQueue.length === 1) {
+    // Si c'est le cas, commencez le traitement
+    processQueue();
   }
-  else{
-    setTimeout(() => { start(); }, 2000);
+});
+
+async function processQueue() {
+  // Récupérez la première requête dans la file d'attente
+  const { url, res } = requestQueue[0];
+
+  // Effectuez le traitement de la requête
+  await lighthouseco2(url, res);
+
+  // Supprimez la première requête de la file d'attente
+  requestQueue.shift();
+
+  // Vérifiez s'il y a d'autres requêtes en attente dans la file
+  if (requestQueue.length > 0) {
+    // Si c'est le cas, traitez la prochaine requête
+    processQueue();
   }
 }
-  start();
-  
-});
+
 
 let port = process.env.PORT || 3000; // Besoin du port 3000 !
 
