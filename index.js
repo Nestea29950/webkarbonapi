@@ -6,7 +6,6 @@ import express, { response } from "express";
 import cors from "cors";
 import url from "node:url";
 
-const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
 var app = express();
 
 app.use(
