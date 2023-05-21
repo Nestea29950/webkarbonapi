@@ -14,7 +14,7 @@ app.use(
   })
 )
 
-// Voir consommation CO2
+// get consommation CO2
 
 function co22(bytes) {
   let oneByte = new co2({ model: "1byte" });
