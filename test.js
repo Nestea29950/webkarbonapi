@@ -19,17 +19,19 @@ app.get("/api", async function (req, res) {
 // Création des threads
 function createWorkerThreads(url,res) {
   const worker1 = new Worker('./worker.js', { workerData: url }); 
-
   // Événement de réception de message du thread
   worker1.on('message', message => {
-    res.send(message)
+    res.send({
+      message,
+    });
   });
   
 }
 
+
+
 let port = process.env.PORT || 3000; // Besoin du port 3000 !
 // -------------------------------
-
 // Faire écouter le port pour lancer l'api
 
 app.listen(port, () => {
