@@ -11,8 +11,6 @@ let activeWorkers = 0; // Nombre de workers actuellement en cours d'exécution
 
 app.get("/api", async function (req, res) {
   const url = req.query.url;
-  console.log(apiQueue);
-  console.log(activeWorkers);
 
   if (activeWorkers < MAX_WORKERS) {
     createWorkerThread(url, res);

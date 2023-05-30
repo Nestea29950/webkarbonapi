@@ -5,7 +5,7 @@ import chromeLauncher from "chrome-launcher";
 import { co2 } from "@tgwf/co2";
 import fetch, { Response } from "node-fetch";
 import url from "node:url";
-
+let chrome;
 // Fonction exécutée dans le thread
 
 lighthouseco2(workerData);
@@ -13,7 +13,9 @@ function lighthouseco2(urll) {
   (async () => {
     let audits = [];
     let runnerResult;
-    let chrome = await chromeLauncher.launch({ chromeFlags: ["--headless"], chromePath: '/usr/bin/google-chrome' });
+    chrome = await chromeLauncher.launch({ chromeFlags: ["--headless"], chromePath: 'usr/bin/google-chrome' });
+    ///usr/bin/google-chrome
+    //./chrome-win/chrome.exe
 
     let options = {
       logLevel: "info",
@@ -90,6 +92,7 @@ function lighthouseco2(urll) {
     });
 
     parentPort.postMessage(audits);
+    await closeChrome();
   })();
 }
 
@@ -99,3 +102,9 @@ function co22(bytes) {
   return emissions;
 }
 // Envoi du résultat à parentPort
+async function closeChrome() {
+  if (chrome) {
+    await chrome.kill();
+    chrome = null;
+  }
+}
