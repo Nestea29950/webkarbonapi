@@ -92,7 +92,7 @@ function lighthouseco2(urll) {
     });
 
     parentPort.postMessage(audits);
-    await closeChrome();
+    
   })();
 }
 
