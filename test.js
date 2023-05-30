@@ -1,39 +1,47 @@
 import { Worker } from 'worker_threads';
-import express, { response } from "express";
+import express from "express";
 import cors from "cors";
-// Fonction exécutée dans le thread
-var app = express();
 
-app.use(
-  cors({
-    origin: "*",
-  })
-)
+var app = express();
+app.use(cors());
+
+const MAX_WORKERS = 2;
+const apiQueue = []; // File d'attente pour les appels d'API en attente
+let activeWorkers = 0; // Nombre de workers actuellement en cours d'exécution
 
 app.get("/api", async function (req, res) {
   const url = req.query.url;
-  createWorkerThreads(url,res)
-  
-})
+  console.log(apiQueue);
+  console.log(activeWorkers);
 
-// Création des threads
-function createWorkerThreads(url,res) {
-  const worker1 = new Worker('./worker.js', { workerData: url }); 
+  if (activeWorkers < MAX_WORKERS) {
+    createWorkerThread(url, res);
+  } else {
+    // Ajouter l'appel d'API à la file d'attente
+    apiQueue.push({ url, res });
+  }
+});
+
+// Création d'un worker thread
+function createWorkerThread(url, res) {
+  const worker = new Worker('./worker.js', { workerData: url });
+  activeWorkers++;
+
   // Événement de réception de message du thread
-  worker1.on('message', message => {
-    res.send({
-      message,
-    });
+  worker.on('message', audits => {
+    res.send({ audits });
+
+    if (apiQueue.length > 0) {
+      // Récupérer le prochain appel d'API dans la file d'attente
+      const nextApiCall = apiQueue.shift();
+      createWorkerThread(nextApiCall.url, nextApiCall.res);
+    } else {
+      activeWorkers--;
+    }
   });
-  
 }
 
-
-
-let port = process.env.PORT || 3000; // Besoin du port 3000 !
-// -------------------------------
-// Faire écouter le port pour lancer l'api
-
+let port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log("App running on port :" + port);
+  console.log("App running on port: " + port);
 });

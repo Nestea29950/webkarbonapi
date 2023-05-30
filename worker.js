@@ -13,7 +13,7 @@ function lighthouseco2(urll) {
   (async () => {
     let audits = [];
     let runnerResult;
-    let chrome = await chromeLauncher.launch({ chromeFlags: ["--headless"], chromePath: '/usr/bin/google-chrome' });
+    let chrome = await chromeLauncher.launch({ chromeFlags: ["--headless"], chromePath: './chrome-win/chrome.exe' });
 
     let options = {
       logLevel: "info",
