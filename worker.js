@@ -80,7 +80,9 @@ function lighthouseco2(urll) {
         a++;
       }
     } else {
-      // Handle the case where the object is not defined
+      audits.push({
+        erreur : "erreur"
+      });
     }
     
     // ------------------------------------------------------------------------
