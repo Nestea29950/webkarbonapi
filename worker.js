@@ -68,21 +68,21 @@ function lighthouseco2(urll) {
       });
     }
 
-    if (runnerResult.lhr.audits["resource-summary"] && runnerResult.lhr.audits["resource-summary"].details && runnerResult.lhr.audits["resource-summary"].details.items) {
-      let a = 0;
-      const audits = [];
-      while (a < runnerResult.lhr.audits["resource-summary"].details.items.length) {
-        audits.push({
-          name: runnerResult.lhr.audits["resource-summary"].details.items[a]["label"],
-          score: null,
-          value: runnerResult.lhr.audits["resource-summary"].details.items[a]["requestCount"],
-        });
-        a++;
-      }
-    } else {
+    let a = 0;
+    while (
+      a < runnerResult.lhr.audits["resource-summary"].details.items.length
+    ) {
       audits.push({
-        erreur : "erreur"
+        name: runnerResult.lhr.audits["resource-summary"].details.items[a][
+          "label"
+        ],
+        score: null,
+        value:
+          runnerResult.lhr.audits["resource-summary"].details.items[a][
+            "requestCount"
+          ],
       });
+      a++;
     }
     
     // ------------------------------------------------------------------------
