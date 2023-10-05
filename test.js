@@ -13,7 +13,7 @@ app.get("/api", async function (req, res) {
   const url = req.query.url;
 
   const origin = req.get('Origin');
-  if(origin == "https://www.webkarbon.bzh" && url != "https://api.webkarbon.fr" && url != "https://api.webkarbon.fr/"){
+  if(origin == "https://www.webkarbon.bzh" || origin == "https://www.webkarbon.fr" && url != "https://api.webkarbon.fr" && url != "https://api.webkarbon.fr/"){
     if (activeWorkers < MAX_WORKERS) {
       createWorkerThread(url, res);
     } else {
