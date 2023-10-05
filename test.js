@@ -12,19 +12,19 @@ let activeWorkers = 0; // Nombre de workers actuellement en cours d'exécution
 app.get("/api", async function (req, res) {
   const url = req.query.url;
 
-  const referer = req.get('Referer');
-  const userAgent = req.get('User-Agent');
   const origin = req.get('Origin');
-
-  console.log(`Referer: ${referer}`);
-  console.log(`User-Agent: ${userAgent}`);
-  console.log(`Origin: ${origin}`);
-  if (activeWorkers < MAX_WORKERS) {
-    createWorkerThread(url, res);
-  } else {
-    // Ajouter l'appel d'API à la file d'attente
-    apiQueue.push({ url, res });
+  if(origin == "https://www.webkarbon.bzh"){
+    if (activeWorkers < MAX_WORKERS) {
+      createWorkerThread(url, res);
+    } else {
+      // Ajouter l'appel d'API à la file d'attente
+      apiQueue.push({ url, res });
+    }
   }
+  else{
+    res.send("erreur");
+  }
+  
 });
 
 // Création d'un worker thread
