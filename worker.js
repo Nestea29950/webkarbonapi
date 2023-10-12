@@ -16,7 +16,7 @@ function lighthouseco2(urll) {
     chrome = await chromeLauncher.launch({ chromeFlags: ["--headless"], chromePath: '/usr/bin/google-chrome' });
     // /usr/bin/google-chrome
     //./chrome-win/chrome.exe
-    //C:/Program Files/Google/Chrome/Application/chrome.exe
+	//C:/Program Files/Google/Chrome/Application/chrome.exe
 
     let options = {
       logLevel: "info",
@@ -24,12 +24,27 @@ function lighthouseco2(urll) {
       onlyCategories: ["performance"],
       port: chrome.port,
     };
+
+
     async function runLighthouse() {
+      
       runnerResult = await lighthouse(urll, options);
       await chrome.kill();
     }
-    console.log("lancement lighthouse");
-    await runLighthouse();
+
+    const timeout = setTimeout(() => {
+      console.log("Lighthouse test took too long, cancelling...");
+      process.exit(1); // Or any other action you want to take when the test is cancelled
+    }, 60000); // 1 minute
+
+    await runLighthouse()
+      .then(() => clearTimeout(timeout))
+      .catch((err) => {
+        clearTimeout(timeout);
+        console.error(err);
+        process.exit(1);
+      });
+    // `.lhr` is the Lighthouse Result as a JS object
 
     // CO2 Calcul à partir de de la function co22 pour pas de doublons
     let co2PerPageview = co22(
@@ -48,8 +63,7 @@ function lighthouseco2(urll) {
     // --------------------------------
 
     // Met tout les noms valeurs dans le tableau audits
-   
-   
+    if (runnerResult.lhr.audits["resource-summary"].details && runnerResult.lhr.audits["resource-summary"].details.items) {
       for (let i in runnerResult.lhr.audits) {
         audits.push({
           name: runnerResult.lhr.audits[i].id,
@@ -57,7 +71,7 @@ function lighthouseco2(urll) {
           value: runnerResult.lhr.audits[i].displayValue,
           numericValue: runnerResult.lhr.audits[i].numericValue,
         });
-      
+      }
   
       let a = 0;
       while (
@@ -85,6 +99,12 @@ function lighthouseco2(urll) {
   
       parentPort.postMessage(audits);
     }
+    else{
+      audits.push('erreur');
+  
+      parentPort.postMessage(audits);
+    }
+    
     
   })();
 }

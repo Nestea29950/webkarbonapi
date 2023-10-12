@@ -13,17 +13,17 @@ app.get("/api", async function (req, res) {
   const url = req.query.url;
 
   const origin = req.get('Origin');
-     if(origin == "https://www.webkarbon.bzh" || origin == "https://www.webkarbon.fr" && url != "https://api.webkarbon.fr" && url != "https://api.webkarbon.fr/"){
-     if (activeWorkers < MAX_WORKERS) {
+      if(origin == "https://www.webkarbon.bzh" || origin == "https://www.webkarbon.fr" && url != "https://api.webkarbon.fr" && url != "https://api.webkarbon.fr/"){
+      if (activeWorkers < MAX_WORKERS) {
       createWorkerThread(url, res);
     } else {
       // Ajouter l'appel d'API à la file d'attente
       apiQueue.push({ url, res });
     }
-     }
-     else{
-       res.send("erreur");
-     }
+      }
+      else{
+        res.send("erreur");
+      }
   
 });
 
