@@ -32,8 +32,7 @@ function lighthouseco2(urll) {
 
     const timeout = setTimeout(() => {
       console.log("Lighthouse test took too long, cancelling...");
-      audits.push('erreur');
-      parentPort.postMessage(audits);// Or any other action you want to take when the test is cancelled
+      process.exit(1); // Or any other action you want to take when the test is cancelled
     }, 60000); // 1 minute
 
     await runLighthouse()
@@ -60,11 +59,10 @@ function lighthouseco2(urll) {
     // --------------------------------
       console.log(runnerResult.lhr.audits.scoreDisplayMode)
     // Met tout les noms valeurs dans le tableau audits
-    if(runnerResult.lhr.audits.scoreDisplayMode == 'error' || runnerResult.lhr.audits.scoreDisplayMode == undefined){
+    
       audits.push('erreur');
       parentPort.postMessage(audits);
-    }
-    else{
+    
       for (let i in runnerResult.lhr.audits) {
         audits.push({
           name: runnerResult.lhr.audits[i].id,
@@ -72,7 +70,7 @@ function lighthouseco2(urll) {
           value: runnerResult.lhr.audits[i].displayValue,
           numericValue: runnerResult.lhr.audits[i].numericValue,
         });
-      }
+      
   
       let a = 0;
       while (
