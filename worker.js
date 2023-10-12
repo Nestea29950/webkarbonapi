@@ -16,6 +16,7 @@ function lighthouseco2(urll) {
     chrome = await chromeLauncher.launch({ chromeFlags: ["--headless"], chromePath: '/usr/bin/google-chrome' });
     // /usr/bin/google-chrome
     //./chrome-win/chrome.exe
+    //C:/Program Files/Google/Chrome/Application/chrome.exe
 
     let options = {
       logLevel: "info",
@@ -27,20 +28,8 @@ function lighthouseco2(urll) {
       runnerResult = await lighthouse(urll, options);
       await chrome.kill();
     }
-
-    const timeout = setTimeout(() => {
-      console.log("Lighthouse test took too long, cancelling...");
-      process.exit(1); // Or any other action you want to take when the test is cancelled
-    }, 60000); // 1 minute
-
-    await runLighthouse()
-      .then(() => clearTimeout(timeout))
-      .catch((err) => {
-        clearTimeout(timeout);
-        console.error(err);
-        process.exit(1);
-      });
-    // `.lhr` is the Lighthouse Result as a JS object
+    console.log("lancement lighthouse");
+    await runLighthouse();
 
     // CO2 Calcul à partir de de la function co22 pour pas de doublons
     let co2PerPageview = co22(
@@ -59,40 +48,46 @@ function lighthouseco2(urll) {
     // --------------------------------
 
     // Met tout les noms valeurs dans le tableau audits
-    for (let i in runnerResult.lhr.audits) {
-      audits.push({
-        name: runnerResult.lhr.audits[i].id,
-        score: runnerResult.lhr.audits[i].score,
-        value: runnerResult.lhr.audits[i].displayValue,
-        numericValue: runnerResult.lhr.audits[i].numericValue,
-      });
+    if(runnerResult.lhr.audits.scoreDisplayMode != 'error'){
+      audits.push('erreur');
+      parentPort.postMessage(audits);
     }
-
-    let a = 0;
-    while (
-      a < runnerResult.lhr.audits["resource-summary"].details.items.length
-    ) {
-      audits.push({
-        name: runnerResult.lhr.audits["resource-summary"].details.items[a][
-          "label"
-        ],
-        score: null,
-        value:
-          runnerResult.lhr.audits["resource-summary"].details.items[a][
-            "requestCount"
+    else{
+      for (let i in runnerResult.lhr.audits) {
+        audits.push({
+          name: runnerResult.lhr.audits[i].id,
+          score: runnerResult.lhr.audits[i].score,
+          value: runnerResult.lhr.audits[i].displayValue,
+          numericValue: runnerResult.lhr.audits[i].numericValue,
+        });
+      }
+  
+      let a = 0;
+      while (
+        a < runnerResult.lhr.audits["resource-summary"].details.items.length
+      ) {
+        audits.push({
+          name: runnerResult.lhr.audits["resource-summary"].details.items[a][
+            "label"
           ],
+          score: null,
+          value:
+            runnerResult.lhr.audits["resource-summary"].details.items[a][
+              "requestCount"
+            ],
+        });
+        a++;
+      }
+      
+      // ------------------------------------------------------------------------
+  
+      audits.push({
+        name: "performances",
+        score: runnerResult.lhr.categories.performance.score,
       });
-      a++;
+  
+      parentPort.postMessage(audits);
     }
-    
-    // ------------------------------------------------------------------------
-
-    audits.push({
-      name: "performances",
-      score: runnerResult.lhr.categories.performance.score,
-    });
-
-    parentPort.postMessage(audits);
     
   })();
 }
@@ -101,11 +96,4 @@ function co22(bytes) {
   let oneByte = new co2({ model: "1byte" });
   let emissions = oneByte.perByte(bytes);
   return emissions;
-}
-// Envoi du résultat à parentPort
-async function closeChrome() {
-  if (chrome) {
-    await chrome.kill();
-    chrome = null;
-  }
 }
