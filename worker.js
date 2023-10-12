@@ -27,10 +27,22 @@ function lighthouseco2(urll) {
     async function runLighthouse() {
       runnerResult = await lighthouse(urll, options);
       await chrome.kill();
+      
     }
-    console.log("lancement lighthouse");
-    await runLighthouse();
 
+    const timeout = setTimeout(() => {
+      console.log("Lighthouse test took too long, cancelling...");
+      audits.push('erreur');
+      parentPort.postMessage(audits);// Or any other action you want to take when the test is cancelled
+    }, 60000); // 1 minute
+
+    await runLighthouse()
+      .then(() => clearTimeout(timeout))
+      .catch((err) => {
+        clearTimeout(timeout);
+        
+      });
+    
     // CO2 Calcul à partir de de la function co22 pour pas de doublons
     let co2PerPageview = co22(
       runnerResult.lhr.audits["total-byte-weight"].numericValue
@@ -46,9 +58,9 @@ function lighthouseco2(urll) {
     ).then((response) => response.json());
     audits.push({ name: "greenhost", score: response.green });
     // --------------------------------
-
+      console.log(runnerResult.lhr.audits.scoreDisplayMode)
     // Met tout les noms valeurs dans le tableau audits
-    if(runnerResult.lhr.audits.scoreDisplayMode != 'error'){
+    if(runnerResult.lhr.audits.scoreDisplayMode == 'error' || runnerResult.lhr.audits.scoreDisplayMode == undefined){
       audits.push('erreur');
       parentPort.postMessage(audits);
     }
