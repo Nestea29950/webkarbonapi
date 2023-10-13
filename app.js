@@ -29,11 +29,11 @@ app.get("/api", async function (req, res) {
 
 // Création d'un worker thread
 function createWorkerThread(url, res) {
+  activeWorkers++;
   const worker = new Worker('./worker.js', { workerData: url });
   console.log("Nouveau worker créé pour :", url);
 
-  activeWorkers++;
-
+  
   // Événement de réception de message du thread
   worker.on('message', audits => {
     console.log("Réponse reçue pour :", url);
@@ -45,7 +45,8 @@ function createWorkerThread(url, res) {
 
     // Terminer le worker une fois le travail terminé
     worker.terminate();
-
+    activeWorkers--;
+    
     if (apiQueue.length > 0) {
       // Récupérer le prochain appel d'API dans la file d'attente
       const nextApiCall = apiQueue.shift();
