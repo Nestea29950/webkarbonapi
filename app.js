@@ -47,7 +47,7 @@ function createWorkerThread(url, res) {
   worker.on('message', audits => {
     console.log(audits);
     if(audits == false){
-      res.send("erreur");
+      res.status(400).send("Problème url");
     }
     else{
       res.send({ audits });
