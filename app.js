@@ -37,6 +37,7 @@ app.get("/api", async function (req, res) {
 });
 
 // Création d'un worker thread
+// Création d'un worker thread
 function createWorkerThread(url, res) {
 
   const worker = new Worker('./worker.js', { workerData: url });
@@ -52,26 +53,25 @@ function createWorkerThread(url, res) {
     else{
       res.send({ audits });
     }
-    
 
     if (apiQueue.length > 0) {
-
       // Récupérer le prochain appel d'API dans la file d'attente
-
       const nextApiCall = apiQueue.shift();
-      
       createWorkerThread(nextApiCall.url, nextApiCall.res);
-
-    } 
-    
-    else {
-
+    } else {
       activeWorkers--;
 
-    }
+      // S'il n'y a plus de travailleurs actifs, cela peut être un bon moment pour rediriger
+      // les demandes de la file d'attente vers de nouveaux workers, le cas échéant.
 
+      if (activeWorkers === 0 && apiQueue.length > 0) {
+        const nextApiCall = apiQueue.shift();
+        createWorkerThread(nextApiCall.url, nextApiCall.res);
+      }
+    }
   });
 }
+
 
 let port = process.env.PORT || 3000;
 app.listen(port, () => {
