@@ -36,7 +36,7 @@ function lighthouseco2(urll) {
       audits = false;
       parentPort.postMessage(audits);
       console.log("Le site prends trop de temps")
-      // process.exit(1); // Or any other action you want to take when the test is cancelled
+      self.terminate(); // Or any other action you want to take when the test is cancelled
     }, 60000); // 1 minute
 
     await runLighthouse()
@@ -45,8 +45,8 @@ function lighthouseco2(urll) {
         clearTimeout(timeout);
         console.log("Erreur je sais pas trop")
         audits = false;
-      parentPort.postMessage(audits);
-      
+        parentPort.postMessage(audits);
+        self.terminate(); 
       });
     // `.lhr` is the Lighthouse Result as a JS object
 
@@ -102,13 +102,14 @@ function lighthouseco2(urll) {
       });
   
       parentPort.postMessage(audits);
+      self.terminate(); 
     }
     else{
       console.log("Probleme url");
       audits = false;
   
       parentPort.postMessage(audits);
-      // process.exit(1); // Or any other action you want to take when the test is cancelled
+      self.terminate(); // Or any other action you want to take when the test is cancelled
     }
     
     
