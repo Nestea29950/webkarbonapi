@@ -11,7 +11,7 @@ let activeWorkers = 0; // Nombre de workers actuellement en cours d'exécution
 
 app.get("/api", async function (req, res) {
   const url = req.query.url;
-
+  console.log(activeWorkers);
   const origin = req.get('Origin');
 
   if ((origin === "https://www.webkarbon.bzh" || origin === "https://www.webkarbon.fr") && url !== "https://api.webkarbon.fr" && url !== "https://api.webkarbon.fr/") {
