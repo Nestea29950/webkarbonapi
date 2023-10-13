@@ -46,14 +46,13 @@ function createWorkerThread(url, res) {
     // Terminer le worker une fois le travail terminé
     worker.terminate();
     activeWorkers--;
-    
+
     if (apiQueue.length > 0) {
       // Récupérer le prochain appel d'API dans la file d'attente
       const nextApiCall = apiQueue.shift();
       console.log("Traitement de la demande en file d'attente pour :", nextApiCall.url);
       createWorkerThread(nextApiCall.url, nextApiCall.res);
     } else {
-      activeWorkers--;
       console.log("Worker terminé pour :", url);
 
       // S'il n'y a plus de travailleurs actifs, cela peut être un bon moment pour rediriger
