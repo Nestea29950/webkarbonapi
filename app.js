@@ -46,7 +46,13 @@ function createWorkerThread(url, res) {
   // Événement de réception de message du thread
   worker.on('message', audits => {
     console.log(audits);
-    res.send({ audits });
+    if(audits == false){
+      res.send("erreur");
+    }
+    else{
+      res.send({ audits });
+    }
+    
 
     if (apiQueue.length > 0) {
 

@@ -33,7 +33,7 @@ function lighthouseco2(urll) {
     }
 
     const timeout = setTimeout(() => {
-      audits.push('erreur');
+      audits = false;
       parentPort.postMessage(audits);
       console.log("Le site prends trop de temps")
       // process.exit(1); // Or any other action you want to take when the test is cancelled
@@ -44,7 +44,7 @@ function lighthouseco2(urll) {
       .catch((err) => {
         clearTimeout(timeout);
         console.log("Erreur je sais pas trop")
-        audits.push('erreur');
+        audits = false;
       parentPort.postMessage(audits);
       
       });
@@ -105,7 +105,7 @@ function lighthouseco2(urll) {
     }
     else{
       console.log("Probleme url");
-      audits.push('erreur');
+      audits = false;
   
       parentPort.postMessage(audits);
       // process.exit(1); // Or any other action you want to take when the test is cancelled
