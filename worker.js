@@ -100,9 +100,8 @@ function lighthouseco2(urll) {
       parentPort.postMessage(audits);
     }
     else{
-      audits.push('erreur');
-  
-      parentPort.postMessage(audits);
+      console.log("Probleme url je pense ");
+      process.exit(1); // Or any other action you want to take when the test is cancelled
     }
     
     
