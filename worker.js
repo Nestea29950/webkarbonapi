@@ -34,6 +34,12 @@ function lighthouseco2(urll) {
 
     const timeout = setTimeout(() => {
       console.log("Lighthouse test took too long, cancelling...");
+      console.log("Lighthouse test took too long, cancelling...");
+      console.log("Lighthouse test took too long, cancelling...");
+      console.log("Lighthouse test took too long, cancelling...");
+      console.log("Lighthouse test took too long, cancelling...");
+      console.log("Lighthouse test took too long, cancelling...");
+      console.log("Lighthouse test took too long, cancelling...");
       process.exit(1); // Or any other action you want to take when the test is cancelled
     }, 60000); // 1 minute
 
@@ -100,6 +106,12 @@ function lighthouseco2(urll) {
       parentPort.postMessage(audits);
     }
     else{
+      console.log("Probleme url je pense ");
+      console.log("Probleme url je pense ");
+      console.log("Probleme url je pense ");
+      console.log("Probleme url je pense ");
+      console.log("Probleme url je pense ");
+      console.log("Probleme url je pense ");
       console.log("Probleme url je pense ");
       process.exit(1); // Or any other action you want to take when the test is cancelled
     }
