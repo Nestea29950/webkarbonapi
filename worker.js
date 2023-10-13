@@ -34,17 +34,19 @@ function lighthouseco2(urll) {
 
     const timeout = setTimeout(() => {
       audits.push('erreur');
-  
       parentPort.postMessage(audits);
-      process.exit(1); // Or any other action you want to take when the test is cancelled
+      console.log("Le site prends trop de temps")
+      // process.exit(1); // Or any other action you want to take when the test is cancelled
     }, 60000); // 1 minute
 
     await runLighthouse()
       .then(() => clearTimeout(timeout))
       .catch((err) => {
         clearTimeout(timeout);
-        console.error(err);
-        process.exit(1);
+        console.log("Erreur je sais pas trop")
+        audits.push('erreur');
+      parentPort.postMessage(audits);
+      
       });
     // `.lhr` is the Lighthouse Result as a JS object
 
@@ -106,7 +108,7 @@ function lighthouseco2(urll) {
       audits.push('erreur');
   
       parentPort.postMessage(audits);
-      process.exit(1); // Or any other action you want to take when the test is cancelled
+      // process.exit(1); // Or any other action you want to take when the test is cancelled
     }
     
     
