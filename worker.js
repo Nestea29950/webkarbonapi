@@ -104,7 +104,7 @@ function lighthouseco2(urll) {
       parentPort.postMessage(audits);
     }
     else{
-      console.log("Probleme url je pense ");
+      console.log("Probleme url");
       audits.push('erreur');
   
       parentPort.postMessage(audits);
