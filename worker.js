@@ -1,7 +1,7 @@
 // worker.js
 import { parentPort, workerData } from "worker_threads";
 import lighthouse from "lighthouse";
-import chromeLauncher from "chrome-launcher";
+import * as chromeLauncher from 'chrome-launcher';
 import { co2 } from "@tgwf/co2";
 import fetch, { Response } from "node-fetch";
 import url from "node:url";
@@ -13,7 +13,12 @@ function lighthouseco2(urll) {
   (async () => {
     let audits = [];
     let runnerResult;
-    chrome = await chromeLauncher.launch({ chromeFlags: ["--headless"], chromePath: '/usr/bin/google-chrome' });
+    chrome = await chromeLauncher.launch({ 
+      chromeFlags: ["--headless", "--no-sandbox", "--disable-dev-shm-usage"], 
+      chromePath: '/usr/bin/google-chrome' 
+    });
+    console.log("Chrome lancé sur le port :", chrome.port);
+
     // /usr/bin/google-chrome
     //./chrome-win/chrome.exe
 	//C:/Program Files/Google/Chrome/Application/chrome.exe

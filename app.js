@@ -1,5 +1,5 @@
 import { Worker } from 'worker_threads';
-import express from "express";
+import express from 'express';
 import cors from "cors";
 
 var app = express();
@@ -14,7 +14,7 @@ app.get("/api", async function (req, res) {
   console.log(activeWorkers);
   const origin = req.get('Origin');
 
-  if ((origin === "https://www.webkarbon.bzh" || origin === "https://www.webkarbon.fr") && url !== "https://api.webkarbon.fr" && url !== "https://api.webkarbon.fr/") {
+  
     if (activeWorkers < MAX_WORKERS) {
       createWorkerThread(url, res);
     } else {
@@ -22,9 +22,7 @@ app.get("/api", async function (req, res) {
       apiQueue.push({ url, res });
       console.log("Demande mise en file d'attente :", url);
     }
-  } else {
-    res.send("erreur");
-  }
+  
 });
 
 // Création d'un worker thread
