@@ -1,6 +1,3 @@
-volumes:
-  shared-data:
-
 services:
   app:
     container_name: webkarbon
@@ -8,7 +5,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - shared-data:/usr/src/app
+      - .:/usr/src/app
     networks:
       - web
 
@@ -20,8 +17,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - shared-data:/usr/src/app  # Partage le volume avec Webkarbon
-      - ./api.webkarbon.bzh:/etc/letsencrypt/live/api.webkarbon.bzh
+      - ./api.webkarbon.bzh:/etc/letsencrypt/live/api.webkarbon.bzh:ro 
     depends_on:
       - app
     networks:
@@ -30,6 +26,3 @@ services:
 networks:
   web:
     driver: bridge
-
-volumes:
-  shared-data:
