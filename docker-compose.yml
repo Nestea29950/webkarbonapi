@@ -33,18 +33,17 @@ services:
       - ./certs/www:/var/www/certbot
       - ./certs/ssl:/certs-ssl
     command: >
-      sh -c "
-      certbot certonly --webroot \
+      sh -c "certbot certonly --webroot \
         --webroot-path=/var/www/certbot \
         --email ton-email@example.com \
         --agree-tos \
         --no-eff-email \
-        -d api.webkarbon.bzh &&
-      cp /etc/letsencrypt/live/api.webkarbon.bzh/fullchain.pem /certs-ssl/cert.pem &&
-      cp /etc/letsencrypt/live/api.webkarbon.bzh/privkey.pem /certs-ssl/key.pem
-      "
+        -d api.webkarbon.bzh && \
+      cp /etc/letsencrypt/live/api.webkarbon.bzh/fullchain.pem /certs-ssl/cert.pem && \
+      cp /etc/letsencrypt/live/api.webkarbon.bzh/privkey.pem /certs-ssl/key.pem"
     networks:
       - web
+
 
 
 
