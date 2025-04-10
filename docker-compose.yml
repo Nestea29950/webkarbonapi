@@ -23,15 +23,15 @@ services:
     networks:
       - web
 
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes: 
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot --force-renewal --email willgaonarch@hotmail.fr -d api.webkarbon.bzh --agree-tos
-    networks:
-      - web
+  # certbot:
+  #   image: certbot/certbot
+  #   container_name: certbot
+  #   volumes: 
+  #     - ./certbot/conf:/etc/letsencrypt
+  #     - ./certbot/www:/var/www/certbot
+  #   command: certonly --webroot -w /var/www/certbot --force-renewal --email willgaonarch@hotmail.fr -d api.webkarbon.bzh --agree-tos
+  #   networks:
+  #     - web
 
 
 networks:
