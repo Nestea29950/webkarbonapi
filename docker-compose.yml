@@ -32,19 +32,15 @@ services:
       - ./certs/lib:/var/lib/letsencrypt
       - ./certs/www:/var/www/certbot
       - ./certs/ssl:/certs-ssl
+    entrypoint: ""
     command: >
-      sh -c "certbot certonly --webroot \
-        --webroot-path=/var/www/certbot \
-        --email ton-email@example.com \
-        --agree-tos \
-        --no-eff-email \
+      sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot \
+        --email willgaonarch@hotmail.fr --agree-tos --no-eff-email \
         -d api.webkarbon.bzh && \
-      cp /etc/letsencrypt/live/api.webkarbon.bzh/fullchain.pem /certs-ssl/cert.pem && \
-      cp /etc/letsencrypt/live/api.webkarbon.bzh/privkey.pem /certs-ssl/key.pem"
+        cp /etc/letsencrypt/live/api.webkarbon.bzh/fullchain.pem /certs-ssl/cert.pem && \
+        cp /etc/letsencrypt/live/api.webkarbon.bzh/privkey.pem /certs-ssl/key.pem"
     networks:
       - web
-
-
 
 
 networks:
