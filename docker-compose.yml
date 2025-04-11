@@ -17,7 +17,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./api.webkarbon.bzh:/etc/letsencrypt/live/api.webkarbon.bzh:ro 
+        - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - app
     networks:
