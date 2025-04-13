@@ -15,6 +15,9 @@ RUN apt-get update && apt-get install -y \
 # Installer Chrome Launcher
 RUN npm install -g chrome-launcher
 
+# Installer PM2 globalement
+RUN npm install -g pm2
+
 # Définir le répertoire de travail dans le conteneur
 WORKDIR /usr/src/app
 
@@ -30,5 +33,5 @@ COPY . .
 # Exposer le port sur lequel l'application va tourner
 EXPOSE 3000
 
-# Commande pour lancer l'application
-CMD [ "node", "app.js" ]
+# Commande pour démarrer l'application avec PM2
+CMD ["pm2-runtime", "app.js"]
